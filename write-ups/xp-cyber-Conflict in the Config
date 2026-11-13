@@ -38,3 +38,36 @@ whole block if you aren't adding mappings. -->
 | NCAE-C Knowledge Units | [Unit name and how its topic came up] |
 
 </details>
+
+Raw documentation notes
+
+Used top and ps commands to investigate running processes.
+
+Apache2 process sometimes spikes to 60%+ utilization
+
+Restarted apache2 which was using a lot of CPU, did not have any effect. Issue recurrs eventually while watching top.
+
+Investigate contents of /etc/apache2/ folder. Error logs in /var/log/apache2/joomla-error_log
+
+nothing in error logs
+
+check /var/log/apache2/error.log.
+[:error] [pid 2642] [client http://172.31.2.197:39753] PHP Warning: file_put_contents(/261112.ini): failed to open stream: Permission denied in /var/www/html/libraries/joomla/filesystem/file.php on line 440, referrer: http://172.31.2.2/index.php?...  ext. client into firewall
+client 172.16.20.60:55270 ... referrer http://172.16.10.100/index.php workstation into server
+
+Stackoverflow suggestion is to adjust ownership of file. 
+Permissions for chmod are currently 777, owner for chown is root root. 
+
+set owner to www-data, Does not appear to resolve issue
+set owner and group to www-data. Does not appear to resolve issue.
+
+Site crashed at some point. reverting above change did not resolve new issue. restarting apache.
+
+Checking snort logs because it increases in activity with apache2
+
+checked /etc/snort/rules
+checked experimental rules, no issues.
+checked custom rules. Alert set for any to any alert, msg test rule should remove
+commented out offending line
+
+Issue resolved
